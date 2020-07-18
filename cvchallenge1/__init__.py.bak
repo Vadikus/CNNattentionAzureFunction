@@ -1,0 +1,41 @@
+import logging
+import os
+import azure.functions as func
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras.applications.vgg16 import VGG16
+from tensorflow.keras.models import load_model
+from tensorflow.keras import backend as K
+
+
+def main(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Python HTTP trigger function processed a request.')
+    
+    tf.compat.v1.disable_eager_execution()
+
+    #model = VGG16(weights='imagenet') 
+    model = load_model('~/.keras/models/vgg19_weights_tf_dim_ordering_tf_kernels.h5') 
+
+    name = req.params.get('name')
+    if not name:
+        try:
+            req_body = req.get_json()
+        except ValueError:
+            pass
+        else:
+            name = req_body.get('name')
+
+    if name:
+        return func.HttpResponse(f"Hello {name}!")
+    else:
+        res = ""
+        try:
+            with open("/keras/test1.txt", 'w') as f:
+                f.write("test1")
+            f.close()
+        except Exception as e:
+            res += " dir exception: " + str(e)        
+        return func.HttpResponse(
+             res + "Please pass a name on the query string or in the request body",
+             status_code=400
+        )

@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>👀Check out where AI is looking</title>
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <style>
+    [v-cloak] {
+      display: none;
+    }
+
+    i.fa-check {
+      color: #009900;
+    }
+
+    i.fa-times {
+      color: #aa0000;
+    }
+
+    @-ms-viewport {
+      width: device-width;
+    }
+
+    @-o-viewport {
+      width: device-width;
+    }
+
+    @viewport {
+      width: device-width;
+    }
+
+    body {
+      padding-top: 40px;
+      padding-bottom: 40px;
+    }
+
+    #app {
+      max-width: 475px;
+    }
+
+    #share-buttons img {
+      width: 32px;
+      padding: 2px;
+      border: 0;
+      box-shadow: 0;
+      display: inline;
+    }
+
+    .form-signin,
+    #success {
+      max-width: 430px;
+      padding: 15px;
+      margin: 0 auto;
+    }
+
+    .form-signin .form-signin-heading,
+    .form-signin .checkbox {
+      margin-bottom: 10px;
+    }
+
+    .form-signin .checkbox {
+      font-weight: normal;
+    }
+
+    .form-signin .form-control {
+      position: relative;
+      height: auto;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    .form-signin .form-control:focus {
+      z-index: 2;
+    }
+
+    a {
+      cursor: pointer;
+    }
+
+    table {
+      margin-top: 24px;
+    }
+  </style>
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+</head>
+
+<body>
+  <div class="container" id="app" v-cloak>
+    <div>
+      <form class="form-signin" v-on:submit.prevent="onSubmit">
+        <h2>Computer Vision Challenge</h2>
+
+        <div>Do you want to know where 🧠 Neural Network is 👀 looking when it recognizes one of 1000 classes of objects?
+          Just grab URL of any image you like and we will try to predict what is on that image. Go ahead! Or drag-and-drop this one of yours truly,
+          especially if you want to know the story behind it: 😅
+        </div>
+          <div><a href="https://kerasstorage.z5.web.core.windows.net/OP.jpg">https://kerasstorage.z5.web.core.windows.net/OP.jpg</a></div>
+          <!--input type="checkbox" id="checkbox" v-model="checked">
+          <label for="chackbox">Or use default picture of OP and read the story behind it. 😅</label-->
+        <br /> 
+        <div class="form-group">
+          <input type="text" placeholder="Image URL" class="form-control" v-model="url" />
+        </div>
+        <div class="form-group" v-if="!results && !waiting">
+          <input type="submit" class="btn btn-primary" value="submit">
+        </div>
+        <div v-if="waiting">
+          <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw"></i>
+        </div>
+        <div v-if="results">
+          Down below are the top 3 predictions made by our Machine Learning model - MobileNet_V2 trained on ImageNet dataset. Don't worry if you don't know what that is.
+          We will figure this out later. And this ML model is not ideal, it might sometimes mis-predict - that makes it even more interesting and sometimes very funny! 😂
+          
+          <h4>{{results.prediction0}}</h4>
+          <h5>{{results.prediction1}}</h5>
+          <h6>{{results.prediction2}}</h6>
+          <br />
+          Scroll down to see where Neural Network was paying attention when it made the first (most confident) prediction. 
+          These areas (cells of 7x7 grid) will be highlighted with the green color.
+          <br />
+        </div>  
+        
+        <br />
+        <img :src="url" v-if="url" style="max-width: 100%;" />
+        <br />
+
+        <div v-if="url === 'https://kerasstorage.z5.web.core.windows.net/OP.jpg'"><i>
+          <br />
+        Let me tell you one embarrassing story behind this image. Ok, may be not "super" embarrassing but definitely funny, at least for the audience at that time.
+        This picture of me (<a href="https://twitter.com/Vadi">@Vadi</a>) was taken about two years ago when I was presenting on stage I think in Singapore.
+        The idea of our technical demo was very simple. Anyone could upload images and photos on our demo website and audience could vote up or down for them.
+        My part of the demo was to grab these images and assign automatic tags to them using pre-trained Machine Learning models (sorry for tech talk). 
+        Meaning my tamed AI was telling me what it was seeing on the image and that was used for tags and labels.
+        <br />
+        It just happened that the last picture uploaded to the demo website right before my tech demo was the one you can observe above. 
+        So, I'm on stage showing life demo where step by step I execute python code doing the image handling, conversion, and finally prediction.
+        If you haven't seen yet what was the result - please, press "Submit" button above. You will not regret! 😆😂🤣 Then continue reading here.
+        </i></div>
+        <div v-if="results && url === 'https://kerasstorage.z5.web.core.windows.net/OP.jpg'"><i>
+          <hr>
+         Yeppp! After executing the code cell with predictions I've got "PUNCHING BAG" printed out in Bold on the projector screen behind me. 
+         The audience EXPLODED IN LAUGHTER!!! 😂😜
+        </i></div>
+        <div v-if="results && url === 'https://kerasstorage.z5.web.core.windows.net/OP.jpg'"><i>
+         So, after a little bit of a shock (well, not everyday you've got called 'punching bag', especially by Artificial Intelligence you kinda created...)
+         I've decided to take a look at the reasons why this label showed up on the first place. 
+         Although, the confidence for this prediction was relatively low (only ~17%)
+         we still could trace what neurons were activated in the network to produce this result.
+         After visualizing the averaged activity intensity in the last convolutional layer it turned out that the shape of the shades in the background 
+         on stage somewhat resemble couple of punching bags and neural network made this prediction using visual features located in there. 🤓😎🥳
+        </i></div>
+        <div v-if="results && url === 'https://kerasstorage.z5.web.core.windows.net/OP.jpg'"><i>
+         My last advice before we switch to technical part of this demo: Don't be afraid to laugh at yourself! Especially during this difficult times.
+         Stay safe, stay sane, stay healthy. 
+        </i></div>
+        <div v-if="results">
+          <br />
+          <img :src="dataUrl" v-if="results" style="max-width: 100%;" />
+          <br />
+        </div>
+ 
+        <div v-if="results">
+          <br />
+          If you find something interesting and/or funny - feel free to share with your friends. 
+          You can safe the image and add it to your post. 
+          The most interesting ones shared with #AIApril tag will get our shootout.
+          This will be our Computer Vision Challenge for <a href="https://twitter.com/search?q=%23AIApril" target="_blank">#AIApril</a> 
+          (or Computer Vision challenges... depends how you look at it... 😂)
+          <br />
+        </div>
+
+        <!-- I got these buttons from simplesharebuttons.com -->
+        <div id="share-buttons" v-if="results"> 
+          <br />
+          <!-- Twitter -->
+          <a href="https://twitter.com/share?url=https://aka.ms/CVattention&amp;text=👀Check%20out%20where%20AI%20is%20looking&amp;hashtags=AIApril&amp;via=Vadi" target="_blank">
+            <img src="https://simplesharebuttons.com/images/somacro/twitter.png" alt="Twitter" />
+          </a>
+
+          <!-- Facebook -->
+          <a href="http://www.facebook.com/sharer.php?u=https://aka.ms/CVattention&amp;text=👀Check%20out%20where%20AI%20is%20looking&amp;hashtags=AIApril" target="_blank">
+            <img src="https://simplesharebuttons.com/images/somacro/facebook.png" alt="Facebook" />
+          </a>        
+          
+          <!-- Digg -->
+          <a href="http://www.digg.com/submit?url=https://aka.ms/CVattention" target="_blank">
+              <img src="https://simplesharebuttons.com/images/somacro/diggit.png" alt="Digg" />
+          </a>
+          
+          <!-- Email -->
+          <a href="mailto:?Subject=👀Check out where AI is looking&amp;Body=I%20saw%20this%20and%20thought%20you%20might%20like%20it!%20 https://aka.ms/CVattention">
+              <img src="https://simplesharebuttons.com/images/somacro/email.png" alt="Email" />
+          </a>
+          
+          <!-- LinkedIn -->
+          <a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=https://aka.ms/CVattention" target="_blank">
+              <img src="https://simplesharebuttons.com/images/somacro/linkedin.png" alt="LinkedIn" />
+          </a>
+          
+          <!-- Pinterest -->
+          <a href="javascript:void((function()%7Bvar%20e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('charset','UTF-8');e.setAttribute('src','http://assets.pinterest.com/js/pinmarklet.js?r='+Math.random()*99999999);document.body.appendChild(e)%7D)());">
+              <img src="https://simplesharebuttons.com/images/somacro/pinterest.png" alt="Pinterest" />
+          </a>
+          
+          <!-- Print -->
+          <a href="javascript:;" onclick="window.print()">
+              <img src="https://simplesharebuttons.com/images/somacro/print.png" alt="Print" />
+          </a>
+          
+          <!-- Reddit -->
+          <a href="http://reddit.com/submit?url=https://aka.ms/CVattention&amp;title=👀Check out where AI is looking" target="_blank">
+              <img src="https://simplesharebuttons.com/images/somacro/reddit.png" alt="Reddit" />
+          </a>
+          
+          <!-- StumbleUpon-->
+          <a href="http://www.stumbleupon.com/submit?url=https://aka.ms/CVattention&amp;title=👀Check out where AI is looking" target="_blank">
+              <img src="https://simplesharebuttons.com/images/somacro/stumbleupon.png" alt="StumbleUpon" />
+          </a>
+          
+          <!-- Tumblr-->
+          <a href="http://www.tumblr.com/share/link?url=https://aka.ms/CVattention&amp;title=👀Check out where AI is looking" target="_blank">
+              <img src="https://simplesharebuttons.com/images/somacro/tumblr.png" alt="Tumblr" />
+          </a>
+          
+          <!-- VK -->
+          <a href="http://vkontakte.ru/share.php?url=https://aka.ms/CVattention" target="_blank">
+              <img src="https://simplesharebuttons.com/images/somacro/vk.png" alt="VK" />
+          </a>
+
+        </div>
+        <h2 v-if="results">CAM technique (Class Activation Mapping)</h2>
+        <div v-if="results">Convolutional Neural Networks are preferred Machine Learning models for Computer Vision nowadays. Two main operations used in these models are convolution itself, and pooling. Convolutional operation allows to find a particular pattern in the input image (in the first layer) and recognize combination of these patterns in the deeper layers. Pattern weights (or filters) convolutional neural network adjusts during training phase by the process call back propagation. Weights of these filters are changed slightly to better and better distinguish features (properties) of different classes the neural network is trained to recognize. Pooling reduces the dimensionality of processed data by shrinking information from 4 to a single pixel with the highest intensity (max pooling) or averaging values of usually 2x2 squares reducing these to a single numeric value.</div>
+        <div v-if="results">Order of the operations, size and number of convolutional operations are called CNN (Convolutional Neural Network) topologies. The original example I've played with demonstrating CAM (Class Activation Mapping) technique was using VGG16. But this neural network has relatively large memory footprint. Trained network weights file takes about 560Mb on a hard drive. Thus, to reduce the start time and memory load of the model I switched to a lighter model called MobileNet_V2, which takes only 14Mb of space.</div>
+        <div v-if="results">All input images are rescaled to 224x224 resolution for both VGG and MobileNet CNNs. After one or several convolutional layers pooling reduces resolution by factor of 4. E.g. 224x224 -> 112x112 -> 56x56 -> 28x28 -> 14x14 (-> 7x7 for MobileNet). At the same time number of channels (or filters) increases with shrinking. In the last convolutional layer filters are processing 7x7 image representations, which were transformed by convolutions and pooling right from the original image with 224x224 resolution. So, if we look at the last convolutional layer, average 1280 channels multiplied by class activation weights (meaning weights connecting neuron responsible for the class with the highest inference confidence) we can recreate 7x7 heatmap of where we have the most activated filter pixels. Overlaying this heatmap with the original image after re-scaling will visualize where our neural network was "looking" while doing the prediction.</div>
+        
+        <h2 v-if="results">Implementation of this demo</h2>
+        <div v-if="results">Statically hosted HTML page has some VueJS interactive elements. This all is rely on Azure Blob Storage functionality. Images are processed by Python code (Keras + PILLOW) running in Azure Functions.</div>
+        <div v-if="results">Static hosting of this website can be done in a few easy steps described in <a href="https://docs.microsoft.com/en-us/azure/storage/blobs/storage-blob-static-website-how-to?tabs=azure-portal&WT.mc.id=aiapril-statichosting-vakarpus" target="_blank">this tutorial</a>. Basically you can have a regular blob storage with special special blob container name <i>$web</i> and files from there can be statically serve to anyone with the link.</div>
+        <div v-if="results">For Azure Function implementation of Machine Learning model inference and heatmap creation using CAM method I followed <a href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-machine-learning-tensorflow?WT.mc.id=aiapril-statichosting-vakarpus&tabs=bash" target="_blank">this tutorial</a>. There's an interesting trick used in the tutorial. If model during initialization is assigned to a global variable it will be available to other runs of this function instance. This saves the time needed to load model topology and weights into the memory.</div>
+        <div v-if="results">Finally, if you are interested in the Machine Learning model itself you can check it out on <a href="https://apacazurephototour-vadi.notebooks.azure.com/j/notebooks/apac-azure-photo-tour-toy.ipynb?WT.mc.id=aiapril-statichosting-vakarpus" target="_blank">Azure Notebooks (requires Azure account)</a> or get it from <a href="https://github.com/Vadikus/practicalDL/blob/master/01%20-%2005%20-%20Attention%20of%20ConvNet%20(VGG16).ipynb?WT.mc.id=aiapril-statichosting-vakarpus" target="_blank">GitHub repository</a>.</div>
+        <div v-if="results">Thank you! I hope you'll have fun with this technique.</div>
+      </form>
+    </div>
+  </div>
+  <!-- /container -->
+  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/3.5.2/superagent.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
+  
+  <script>
+    var apiBaseUrl = 'https://attentioncv.azurewebsites.net'
+    // 'http://localhost:7071'
+    var app = new Vue({
+      el: '#app',
+      data: function() {
+        return {
+          url: '',
+          results: null,
+          waiting: false,
+          punchbag: false,
+        }
+      },
+      computed : {
+        dataUrl(){
+            return 'data:image/jpeg;base64,' + this.results.img;
+        }
+      },
+      methods: {
+        onSubmit: function (event) {
+          this.waiting = true;
+          superagent
+            .get(apiBaseUrl + '/api/cvchallenge1')
+            .query({ 'code' : "fCfbwLSfR/LdnRuUUj34IqkuG3HPRB4Y7d4yfjc/RouUoaKKY4cDqg==" , img: this.url })
+            .end(function (err, res) {
+              this.waiting = false;
+              if (err) {
+                this.results = null;
+                alert("An error has occurred");
+              } else {
+                this.results = res.body;
+              }
+            }.bind(this));
+        }
+      },
+      watch: {
+        url: function () {
+          this.results = null;
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
